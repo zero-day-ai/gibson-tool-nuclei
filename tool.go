@@ -17,7 +17,7 @@ import (
 	"github.com/zero-day-ai/sdk/tool"
 	"github.com/zero-day-ai/sdk/toolerr"
 	"github.com/zero-day-ai/sdk/types"
-	"github.com/zero-day-ai/tools/discovery/nuclei/gen"
+	"github.com/zero-day-ai/gibson-tool-nuclei/gen"
 	"google.golang.org/protobuf/proto"
 )
 

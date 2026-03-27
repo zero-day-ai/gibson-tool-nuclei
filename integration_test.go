@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zero-day-ai/sdk/types"
-	"github.com/zero-day-ai/tools/discovery/nuclei/gen"
+	"github.com/zero-day-ai/gibson-tool-nuclei/gen"
 )
 
 func TestNucleiIntegration(t *testing.T) {

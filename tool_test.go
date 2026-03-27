@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zero-day-ai/sdk/toolerr"
-	"github.com/zero-day-ai/tools/discovery/nuclei/gen"
+	"github.com/zero-day-ai/gibson-tool-nuclei/gen"
 )
 
 func TestToolImpl_Name(t *testing.T) {

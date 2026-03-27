@@ -12,7 +12,7 @@ import (
 	healthhttp "github.com/zero-day-ai/sdk/health/http"
 	"github.com/zero-day-ai/sdk/tool/worker"
 	"github.com/zero-day-ai/sdk/types"
-	"github.com/zero-day-ai/tools/discovery/nuclei"
+	"github.com/zero-day-ai/gibson-tool-nuclei"
 )
 
 func main() {

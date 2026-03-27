@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/zero-day-ai/sdk/serve"
-	"github.com/zero-day-ai/tools/discovery/nuclei"
+	"github.com/zero-day-ai/gibson-tool-nuclei"
 )
 
 func main() {

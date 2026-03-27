@@ -825,7 +825,7 @@ const file_nuclei_proto_rawDesc = "" +
 	"\x06cwe_id\x18\x02 \x03(\tR\x05cweId\x12!\n" +
 	"\fcvss_metrics\x18\x03 \x01(\tR\vcvssMetrics\x12\x1d\n" +
 	"\n" +
-	"cvss_score\x18\x04 \x01(\x01R\tcvssScoreB3Z1github.com/zero-day-ai/tools/discovery/nuclei/genb\x06proto3"
+	"cvss_score\x18\x04 \x01(\x01R\tcvssScoreB3Z1github.com/zero-day-ai/gibson-tool-nuclei/genb\x06proto3"
 
 var (
 	file_nuclei_proto_rawDescOnce sync.Once

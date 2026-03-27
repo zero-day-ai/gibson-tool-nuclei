@@ -1,0 +1,200 @@
+syntax = "proto3";
+package gibson.tools.nuclei;
+option go_package = "github.com/zero-day-ai/tools/discovery/nuclei/gen";
+
+import "graphrag.proto";
+
+// NucleiRequest represents input for the nuclei tool
+message NucleiRequest {
+    // Targets is the list of URLs or hosts to scan (required)
+    repeated string targets = 1;
+
+    // Templates specifies template IDs or paths to use
+    repeated string templates = 2;
+
+    // Tags filters templates by tags
+    repeated string tags = 3;
+
+    // Severity filters templates by severity (info, low, medium, high, critical)
+    repeated string severity = 4;
+
+    // Author filters templates by author
+    repeated string author = 5;
+
+    // ExcludeTags excludes templates with specific tags
+    repeated string exclude_tags = 6;
+
+    // ExcludeSeverity excludes templates with specific severities
+    repeated string exclude_severity = 7;
+
+    // IncludeTemplates includes specific template files or directories
+    repeated string include_templates = 8;
+
+    // ExcludeTemplates excludes specific template files or directories
+    repeated string exclude_templates = 9;
+
+    // Threads is the number of concurrent threads
+    int32 threads = 10;
+
+    // RateLimit is the maximum requests per second
+    int32 rate_limit = 11;
+
+    // Timeout is the timeout in seconds for each request
+    int32 timeout = 12;
+
+    // Retries is the number of retries for failed requests
+    int32 retries = 13;
+
+    // BulkSize is the number of targets to process in parallel per template
+    int32 bulk_size = 14;
+
+    // FollowRedirects enables following HTTP redirects
+    bool follow_redirects = 15;
+
+    // FollowHostRedirects enables following redirects to different hosts
+    bool follow_host_redirects = 16;
+
+    // MaxRedirects is the maximum number of redirects to follow
+    int32 max_redirects = 17;
+
+    // DisableUpdateCheck disables automatic template updates
+    bool disable_update_check = 18;
+
+    // UpdateTemplates forces template updates before scanning
+    bool update_templates = 19;
+
+    // Headless enables headless browser support
+    bool headless = 20;
+
+    // PageTimeout is the timeout for headless page operations
+    int32 page_timeout = 21;
+
+    // ShowBrowser shows the browser in headless mode
+    bool show_browser = 22;
+
+    // SystemResolvers uses system DNS resolvers
+    bool system_resolvers = 23;
+
+    // Passive enables passive scan mode (no active probing)
+    bool passive = 24;
+
+    // OfflineHTTP processes HTTP raw requests from stdin
+    bool offline_http = 25;
+}
+
+// NucleiResponse represents output from the nuclei tool
+message NucleiResponse {
+    // Results contains the scan results
+    repeated TemplateMatch results = 1;
+
+    // TotalRequests is the total number of requests made
+    int32 total_requests = 2;
+
+    // TotalMatches is the total number of matches found
+    int32 total_matches = 3;
+
+    // Duration is the scan duration in seconds
+    double duration = 4;
+
+    // TemplatesLoaded is the number of templates loaded
+    int32 templates_loaded = 5;
+
+    // TemplatesExecuted is the number of templates executed
+    int32 templates_executed = 6;
+
+    // Discovery result for automatic graph storage
+    gibson.graphrag.DiscoveryResult discovery = 100;
+}
+
+// TemplateMatch represents a single nuclei template match
+message TemplateMatch {
+    // TemplateID is the template identifier
+    string template_id = 1;
+
+    // TemplateName is the template name
+    string template_name = 2;
+
+    // TemplatePath is the template file path
+    string template_path = 3;
+
+    // Info contains template metadata
+    TemplateInfo info = 4;
+
+    // MatcherName is the name of the matcher that triggered
+    string matcher_name = 5;
+
+    // Type is the match type (http, dns, network, etc.)
+    string type = 6;
+
+    // Host is the target host
+    string host = 7;
+
+    // URL is the matched URL
+    string url = 8;
+
+    // MatchedAt is the matched location
+    string matched_at = 9;
+
+    // ExtractedResults contains extracted data from the match
+    repeated string extracted_results = 10;
+
+    // Request is the HTTP request (if applicable)
+    string request = 11;
+
+    // Response is the HTTP response (if applicable)
+    string response = 12;
+
+    // IP is the target IP address
+    string ip = 13;
+
+    // Timestamp is the match timestamp
+    int64 timestamp = 14;
+
+    // CURLCommand is the equivalent curl command
+    string curl_command = 15;
+
+    // Metadata contains additional match metadata
+    map<string, string> metadata = 16;
+}
+
+// TemplateInfo contains nuclei template metadata
+message TemplateInfo {
+    // Name is the template name
+    string name = 1;
+
+    // Author is the template author
+    string author = 2;
+
+    // Severity is the finding severity (info, low, medium, high, critical)
+    string severity = 3;
+
+    // Description is the template description
+    string description = 4;
+
+    // Reference contains reference URLs
+    repeated string reference = 5;
+
+    // Tags contains template tags
+    repeated string tags = 6;
+
+    // Classification contains classification information
+    TemplateClassification classification = 7;
+
+    // Remediation contains remediation guidance
+    string remediation = 8;
+}
+
+// TemplateClassification contains template classification data
+message TemplateClassification {
+    // CVEId contains CVE identifiers
+    repeated string cve_id = 1;
+
+    // CWEId contains CWE identifiers
+    repeated string cwe_id = 2;
+
+    // CVSSMetrics is the CVSS metrics string
+    string cvss_metrics = 3;
+
+    // CVSSScore is the CVSS score
+    double cvss_score = 4;
+}

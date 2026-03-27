@@ -1,0 +1,101 @@
+# Dockerfile for nuclei worker
+# This creates a containerized worker that processes nuclei scans from a Redis work queue.
+#
+# Build:
+#   docker build -f Dockerfile.worker -t nuclei-worker:latest .
+#
+# Run:
+#   docker run -e REDIS_URL=redis://localhost:6379 nuclei-worker:latest
+
+# Stage 1: Build the Go binary
+FROM golang:1.24-bookworm AS builder
+
+LABEL maintainer="Zero-Day.AI <anthony@zero-day.ai>" \
+      description="nuclei worker for Gibson tool work queue" \
+      version="1.0.0"
+
+WORKDIR /build
+
+# Copy go.mod and go.sum first for better layer caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build the worker binary
+# CGO_ENABLED=0 for static binary (no libc dependency)
+# GOOS=linux ensures Linux binary regardless of build platform
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo \
+    -ldflags '-extldflags "-static" -s -w' \
+    -o nuclei-worker ./cmd/worker
+
+# Stage 2: Runtime image with nuclei
+FROM debian:bookworm-slim
+
+LABEL maintainer="Zero-Day.AI <anthony@zero-day.ai>" \
+      description="nuclei worker for Gibson tool work queue" \
+      version="1.0.0"
+
+# Install nuclei, wget, unzip, ca-certificates and clean up in a single layer to minimize image size
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    wget \
+    unzip \
+    ca-certificates && \
+    wget -qO /tmp/nuclei.zip https://github.com/projectdiscovery/nuclei/releases/download/v3.7.1/nuclei_3.7.1_linux_amd64.zip && \
+    unzip /tmp/nuclei.zip -d /tmp && \
+    mv /tmp/nuclei /usr/local/bin/ && \
+    chmod +x /usr/local/bin/nuclei && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Create non-root user for security
+RUN groupadd -r nuclei && useradd -r -g nuclei -u 1000 nuclei
+
+# Create directory for nuclei data files
+RUN mkdir -p /home/nuclei && chown nuclei:nuclei /home/nuclei
+
+# Update nuclei templates as nuclei user
+USER nuclei
+WORKDIR /home/nuclei
+RUN nuclei -update-templates
+
+# Copy the worker binary from builder stage
+USER root
+COPY --from=builder /build/nuclei-worker /usr/local/bin/nuclei-worker
+RUN chmod +x /usr/local/bin/nuclei-worker
+
+# Switch to non-root user
+USER nuclei
+
+# Set working directory
+WORKDIR /home/nuclei
+
+# Environment variables (can be overridden at runtime)
+# REDIS_URL: Redis connection string (required)
+ENV REDIS_URL=""
+
+# CONCURRENCY: Number of concurrent worker goroutines (default: 4)
+ENV CONCURRENCY=4
+
+# LOG_LEVEL: Logging verbosity (debug, info, warn, error)
+ENV LOG_LEVEL="info"
+
+# Set entrypoint to worker binary
+ENTRYPOINT ["/usr/local/bin/nuclei-worker"]
+
+# Default arguments - can be overridden in docker run or k8s manifest
+# Example overrides:
+#   docker run nuclei-worker:latest --concurrency=8
+#   docker run nuclei-worker:latest --redis-url=redis://custom:6379
+CMD ["--concurrency=4"]
+
+# Healthcheck to verify worker is responsive
+# This checks if the process is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD pgrep -x nuclei-worker || exit 1
+
+# Document purpose
+# This worker processes vulnerability scanning tasks from Redis queue using ProjectDiscovery's nuclei tool
+# The worker runs as non-root user for security best practices

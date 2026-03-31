@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/zero-day-ai/sdk/serve"
 	"github.com/zero-day-ai/gibson-tool-nuclei"
@@ -10,7 +11,8 @@ import (
 func main() {
 	tool := nuclei.NewTool()
 	if err := serve.Tool(tool,
-		serve.WithRegistryFromEnv(),
+		serve.WithPlatformFromEnv(),
+		serve.WithGracefulShutdown(30*time.Second),
 	); err != nil {
 		log.Fatal(err)
 	}

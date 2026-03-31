@@ -25,16 +25,7 @@ dependencies:
   gibson: ">=1.0.0"
   system:
     - nuclei  # nuclei must be installed
-  env: {}
-
-# Worker configuration for queue-based execution
-worker:
-  # Nuclei is I/O-bound (template execution and HTTP requests), so moderate concurrency is optimal.
-  # Each scan can spawn multiple HTTP connections, so memory usage scales with concurrency.
-  concurrency: 4
-
-  # Allow up to 60 seconds for graceful shutdown since template scans can take time.
-  shutdown_timeout: 60s
-
-  # Heartbeat every 10 seconds to maintain health status
-  heartbeat_interval: 10s
+  env:
+    required:
+      - GIBSON_PLATFORM_URL
+      - GIBSON_API_KEY

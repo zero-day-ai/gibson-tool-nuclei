@@ -1,8 +1,8 @@
 syntax = "proto3";
-package gibson.tools.nuclei;
+package gibson.tools.nuclei.v1;
 option go_package = "github.com/zero-day-ai/tools/discovery/nuclei/gen";
 
-import "graphrag.proto";
+import "gibson/graphrag/v1/graphrag.proto";
 
 // NucleiRequest represents input for the nuclei tool
 message NucleiRequest {
@@ -103,7 +103,7 @@ message NucleiResponse {
     int32 templates_executed = 6;
 
     // Discovery result for automatic graph storage
-    gibson.graphrag.DiscoveryResult discovery = 100;
+    gibson.graphrag.v1.DiscoveryResult discovery = 100;
 }
 
 // TemplateMatch represents a single nuclei template match

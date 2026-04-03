@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/stretchr/testify v1.11.1
-	github.com/zero-day-ai/sdk v0.58.0
+	github.com/zero-day-ai/sdk v0.58.1-0.20260401215420-eec8d9d4b5ef
 	google.golang.org/protobuf v1.36.11
 )
 

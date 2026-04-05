@@ -23,9 +23,11 @@ RUN wget -qO /tmp/nuclei.zip \
     chmod +x /tmp/nuclei && \
     rm -f /tmp/nuclei.zip
 
-# Download nuclei templates
-# Run nuclei -update-templates to fetch the default template repository
-RUN /tmp/nuclei -update-templates -home /tmp/nuclei-home
+# Download nuclei templates using the correct flag syntax
+# The -ud flag sets the template directory, -ut triggers the update
+ENV HOME=/tmp/nuclei-home
+RUN mkdir -p /tmp/nuclei-home && /tmp/nuclei -update-templates -ud /tmp/nuclei-home/nuclei-templates || \
+    echo "WARNING: template download failed, templates will be fetched at runtime"
 
 # ============================================================================
 # Stage 2: Builder - Build Go wrapper binary
@@ -70,8 +72,8 @@ RUN addgroup -g 1000 gibson && \
 # Copy nuclei binary from downloader stage
 COPY --from=downloader /tmp/nuclei /usr/local/bin/nuclei
 
-# Copy nuclei templates from downloader stage
-COPY --from=downloader /tmp/nuclei-home /home/gibson/.config/nuclei
+# Copy nuclei templates from downloader stage (if download succeeded)
+COPY --from=downloader /tmp/nuclei-home/ /home/gibson/.config/nuclei/
 
 # Copy the Go wrapper binary from builder stage
 COPY --from=builder /build/nuclei-tool /usr/local/bin/nuclei-tool

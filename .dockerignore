@@ -1,0 +1,14 @@
+.git
+.gitignore
+.github
+.dockerignore
+Dockerfile
+Makefile
+README.md
+LICENSE
+bin/
+*.md
+.spec-workflow
+.claude
+go.work
+go.work.sum

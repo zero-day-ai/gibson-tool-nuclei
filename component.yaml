@@ -24,7 +24,9 @@ runtime:
 dependencies:
   gibson: ">=1.0.0"
   system:
-    - nuclei  # nuclei must be installed
+    - name: nuclei
+      required: true
+      version_command: "-version"
   env:
     required:
       - GIBSON_PLATFORM_URL
